@@ -1,1 +1,7 @@
 *.env
+venv/
+.idea/
+session.session
+*/media/*
+*celerybeat-schedule
+dev.docker-compose.yml

@@ -1,0 +1,21 @@
+[flake8]
+ignore =
+    # Conflict with old style W503.
+    W504,
+    # The restriction on the length of strings.
+    # E501
+exclude =
+    # Git certainly doesn't need to be checked.
+    .git,
+    # Bytecode directories to skiping.
+    __pycache__,
+    # Eggs from installation, they can not escape!
+    *.egg-info
+per-file-ignores =
+    # Migrations in all apps.
+    */migrations/*: E501
+
+# Maximum characters for line.
+max-line-length = 120
+# Maximum number of conditions within one function.
+# max-complexity = 32
