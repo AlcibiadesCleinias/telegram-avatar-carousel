@@ -10,11 +10,11 @@ redis_connector = redis.Redis(
     db=0,
     decode_responses=False,
 )
+session = RedisSession(settings.TG_API_PHONE, redis_connector)
 
 
 async def get_telegram_client() -> TelegramClient:
     """Returns client, not connected."""
-    session = RedisSession(settings.TG_API_PHONE, redis_connector)
     client = TelegramClient(
         session, settings.TG_API_KEY, settings.TG_API_HASH,
     )
