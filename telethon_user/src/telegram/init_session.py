@@ -46,5 +46,4 @@ async def init_session(client: TelegramClient, phone: str):
     await request_code(client, phone)
     user_code = input('Enter code you received...\n')
     user_password = input('Enter password if you enable 2 step auth...\n')
-
     return await post_code(client, phone, user_code, user_password)
