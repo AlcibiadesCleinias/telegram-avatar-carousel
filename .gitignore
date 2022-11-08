@@ -1,3 +1,4 @@
 *.env
 .idea/
 dev.docker-compose.yml
+*.DS_Store
