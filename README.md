@@ -11,4 +11,4 @@ from a [folder](telethon_user/src/data_avatars).
 - prepare `.env`
 - start job with `docker-compose up -d`
 - init telegram session from running docker container: 
-`docker-compose run telethon_user sh -c "python main.py --init-session true"`
+`docker-compose run telethon_user python main.py --init-session true`

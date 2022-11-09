@@ -1,0 +1,22 @@
+# Сompose file with volume mounting for data_avatars
+version: '3.8'
+
+volumes:
+  redis_data:
+  telethon_user_data_session:
+
+services:
+  redis:
+    image: redis:6.0.8-alpine
+    volumes:
+      - redis_data:/data
+
+  telethon_user:
+    build:
+      context: ./telethon_user
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - telethon_user_data_session:/opt/data_session
+      - ./telethon_user/src/data_avatars/:/opt/data_avatars/
