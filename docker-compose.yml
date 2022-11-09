@@ -5,13 +5,23 @@ volumes:
   redis_data:
   telethon_user_data_session:
 
+x-app: &prod-service
+  logging:
+    driver: "json-file"
+    options:
+      max-file: "3"
+      max-size: "10m"
+  restart: "always"
+
 services:
   redis:
+    <<: *prod-service
     image: redis:6.0.8-alpine
     volumes:
       - redis_data:/data
 
   telethon_user:
+    <<: *prod-service
     build:
       context: ./telethon_user
       dockerfile: Dockerfile
