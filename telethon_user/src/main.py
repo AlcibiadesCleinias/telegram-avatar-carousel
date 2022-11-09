@@ -1,5 +1,4 @@
 import argparse
-import asyncio
 from logging.config import dictConfig
 
 from config.logger import get_app_logger
@@ -24,7 +23,7 @@ def main(args):
             return
 
         logger.info(
-            'Start avatar jon rotation for avatars: %s with crontab %s', all_images, settings.ROTATE_AVATAR_TASK_CORO,
+            'Start task avatar rotation. Avatars %s with crontab %s', all_images, settings.ROTATE_AVATAR_TASK_CORO,
         )
         RotateAvatarTask(
             crontab_schedule=settings.ROTATE_AVATAR_TASK_CORO,
