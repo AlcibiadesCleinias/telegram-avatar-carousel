@@ -26,16 +26,12 @@ def main(args):
         logger.info(
             'Start avatar jon rotation for avatars: %s with crontab %s', all_images, settings.ROTATE_AVATAR_TASK_CORO,
         )
-        loop = asyncio.get_event_loop()
-        async def _task():
-            task = RotateAvatarTask(
-                crontab_schedule=settings.ROTATE_AVATAR_TASK_CORO,
-                client=get_telegram_client_inited,
-                phone=settings.TG_API_PHONE,
-                image_paths=all_images,
-            ).start()
-            return await task
-        loop.run_until_complete(_task())
+        RotateAvatarTask(
+            crontab_schedule=settings.ROTATE_AVATAR_TASK_CORO,
+            client=get_telegram_client_inited,
+            phone=settings.TG_API_PHONE,
+            image_paths=all_images,
+        ).start()
 
 
 if __name__ == '__main__':

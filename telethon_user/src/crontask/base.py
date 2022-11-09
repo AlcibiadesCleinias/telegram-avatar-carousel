@@ -54,9 +54,10 @@ class CronTaskBase:
         self.cron_expression = cron_expression
         self.coro = coro if not args else functools.partial(coro, *args)
 
-    async def start(self):
-        """Start task as main job."""
-        await cron_task(self.cron_expression, self.coro)
+    def start(self):
+        """Start task as main job in loop."""
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(cron_task(self.cron_expression, self.coro))
 
     def register(self):
         """Register task to be run in the same loop."""
