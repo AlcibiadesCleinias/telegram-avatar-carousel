@@ -13,11 +13,12 @@ def redis_key_to_current_image(phone: str):
     return f'current_image:{phone}'
 
 
-async def _get_next_image(phone: str, images: list[str]) -> str:
+async def _get_next_image(phone: str, images: list[str]) -> (bool, str):
+    """Returns tuple of if previous image known and next image."""
     current_image = await redis.get(redis_key_to_current_image(phone))
     logger.info('Current image according to Redis is %s', current_image)
     if not current_image:
-        return images[0]
+        return bool(current_image), images[0]
 
     idx = 0
     images_len = len(images)
@@ -27,15 +28,15 @@ async def _get_next_image(phone: str, images: list[str]) -> str:
         idx += 1
 
     if idx == images_len:
-        return images[0]
+        return bool(current_image), images[0]
 
-    return images[(idx + 1) % images_len]
+    return bool(current_image), images[(idx + 1) % images_len]
 
 
 async def _change_image_to_next(client: TelegramClient, phone: str, image_paths: list[str]):
-    new_image = await _get_next_image(phone, image_paths)
+    is_previous, new_image = await _get_next_image(phone, image_paths)
     logger.info('Next image %s to change', new_image)
-    await change_avatar(client, new_image)
+    await change_avatar(client, new_image, delete_previous=is_previous)
     image_set = await redis.set(redis_key_to_current_image(phone), new_image)
     return image_set
 

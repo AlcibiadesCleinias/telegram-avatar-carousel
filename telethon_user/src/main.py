@@ -1,7 +1,7 @@
 import argparse
+import logging
 from logging.config import dictConfig
 
-from config.logger import get_app_logger
 from config.settings import settings, LOGGING
 from crontask.rotate_avatar import RotateAvatarTask
 from telegram.client import telegram_client, get_telegram_client_inited
@@ -9,7 +9,7 @@ from telegram.init_session import init_session
 from utils.image_files import get_all_images
 
 dictConfig(LOGGING)
-logger = get_app_logger()
+logger = logging.getLogger(__name__)
 
 
 def main(args):

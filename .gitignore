@@ -2,3 +2,4 @@
 .idea/
 dev.docker-compose.yml
 *.DS_Store
+*.session

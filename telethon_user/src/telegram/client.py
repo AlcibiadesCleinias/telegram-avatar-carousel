@@ -1,5 +1,4 @@
 from telethon import TelegramClient
-from teleredis import RedisSession  # todo: to async
 from config.settings import settings
 import redis  # todo: to async
 
@@ -10,9 +9,8 @@ redis_connector = redis.Redis(
     db=0,
     decode_responses=False,
 )
-session = RedisSession(settings.TG_SESSION, redis_connector)
 telegram_client = TelegramClient(
-    session, settings.TG_API_KEY, settings.TG_API_HASH,
+    'session', settings.TG_API_KEY, settings.TG_API_HASH,
 )
 
 async def get_telegram_client_inited() -> 'TelegramClient':

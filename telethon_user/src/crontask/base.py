@@ -1,13 +1,13 @@
 import asyncio
 import functools
+import logging
 from typing import Coroutine, Callable, Any, Tuple, Optional
 from datetime import datetime
 
 from croniter import croniter
 
-from config.logger import get_app_logger
 
-logger = get_app_logger()
+logger = logging.getLogger(__name__)
 
 
 async def _wait_until(dt: datetime):
