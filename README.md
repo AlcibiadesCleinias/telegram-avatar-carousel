@@ -6,6 +6,7 @@ from a [folder](telethon_user/src/data_avatars).
 # Feature
 - periodically **delete previous** photo about which app knows & **upload next** from the folder.
 - store session in a file
+- telegram ecology: use telegram file id if already uploaded to telegram (checks via Redis)
 
 # Start
 - prepare `.env` (you will need telegram API & hash from https://my.telegram.org/auth)
