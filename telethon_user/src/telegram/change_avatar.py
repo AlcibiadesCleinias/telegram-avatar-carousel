@@ -6,8 +6,9 @@ from config.logger import get_app_logger
 logger = get_app_logger()
 
 
-async def change_avatar(client: TelegramClient, image_path: str) -> int:
+async def change_avatar(client_inited: 'TelegramClient', image_path: str) -> int:
     """Return telegram image id of changed avatar."""
-    return await client(UploadProfilePhotoRequest(
-        await client.upload_file(image_path)
-    ))
+    async with await client_inited() as bot:
+        return await bot(UploadProfilePhotoRequest(
+            await bot.upload_file(image_path)
+        ))

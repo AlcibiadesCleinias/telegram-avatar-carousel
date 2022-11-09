@@ -10,12 +10,12 @@ redis_connector = redis.Redis(
     db=0,
     decode_responses=False,
 )
-session = RedisSession(settings.TG_API_PHONE, redis_connector)
+session = RedisSession(settings.TG_SESSION, redis_connector)
+telegram_client = TelegramClient(
+    session, settings.TG_API_KEY, settings.TG_API_HASH,
+)
 
-
-async def get_telegram_client() -> TelegramClient:
+async def get_telegram_client_inited() -> 'TelegramClient':
     """Returns client, not connected."""
-    client = TelegramClient(
-        session, settings.TG_API_KEY, settings.TG_API_HASH,
-    )
-    return client
+    # TODO: hack with avaited
+    return await telegram_client.start()

@@ -19,9 +19,17 @@ async def _get_next_image(phone: str, images: list[str]) -> str:
     if not current_image:
         return images[0]
 
-    for idx, image in enumerate(images):
-        if image == current_image:
-            return images[idx+1]
+    idx = 0
+    images_len = len(images)
+    while idx < images_len:
+        if current_image == images[idx]:
+            break
+        idx += 1
+
+    if idx == images_len:
+        return images[0]
+
+    return images[(idx + 1) % images_len]
 
 
 async def _change_image_to_next(client: TelegramClient, phone: str, image_paths: list[str]):
@@ -33,7 +41,7 @@ async def _change_image_to_next(client: TelegramClient, phone: str, image_paths:
 
 
 class RotateAvatarTask(CronTaskBase):
-    def __init__(self, crontab_schedule: str, client: TelegramClient, phone: str, image_paths: list[str]):
+    def __init__(self, crontab_schedule: str, client: 'TelegramClient', phone: str, image_paths: list[str]):
         super().__init__(
             crontab_schedule,
             coro=_change_image_to_next,
