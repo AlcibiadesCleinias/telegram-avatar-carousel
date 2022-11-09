@@ -36,7 +36,8 @@ async def _get_next_image(phone: str, images: list[str]) -> (bool, str):
 async def _change_image_to_next(client: TelegramClient, phone: str, image_paths: list[str]):
     is_previous, new_image = await _get_next_image(phone, image_paths)
     logger.info('Next image %s to change', new_image)
-    await change_avatar(client, new_image, delete_previous=is_previous)
+    changed = await change_avatar(client, new_image, delete_previous=is_previous)
+    logger.info('Changed to %s', changed)
     image_set = await redis.set(redis_key_to_current_image(phone), new_image)
     return image_set
 
