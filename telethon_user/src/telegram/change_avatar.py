@@ -1,6 +1,7 @@
 import logging
 
 from telethon import TelegramClient
+from telethon.errors import FilePart0MissingError
 from telethon.tl.functions.photos import UploadProfilePhotoRequest, DeletePhotosRequest
 
 from config.misc import redis
@@ -24,17 +25,20 @@ async def change_avatar(client_inited: 'TelegramClient', image_path: str, delete
 
         telegram_file_cache = TelegramFileCacheStorage(redisdb=redis, file_name=image_path)
         telegram_file_cached = await telegram_file_cache.get()
-        if not telegram_file_cached:
-            logger.info('No %s in cache, upload the file...', image_path)
-            upload_file_request = UploadProfilePhotoRequest(
-                await bot.upload_file(image_path)
-            )
-            logger.info('Save tg file %s into Redis cache...', image_path)
-            await telegram_file_cache.save(upload_file_request.file)
-        else:
+        if telegram_file_cached:
             logger.info('Found file %s in redis cache, use it...', image_path)
             tg_file = await telegram_file_cache.get()
-
             upload_file_request = UploadProfilePhotoRequest(tg_file)
+            try:
+                return await bot(upload_file_request)
+            except FilePart0MissingError:
+                logger.warning('Could not use cached file due to FilePart0MissingError, continue...')
+                pass
 
+        logger.info('Upload the file %s...', image_path)
+        upload_file_request = UploadProfilePhotoRequest(
+            await bot.upload_file(image_path)
+        )
+        logger.info('Save tg file %s into Redis cache...', image_path)
+        await telegram_file_cache.save(upload_file_request.file)
         return await bot(upload_file_request)
