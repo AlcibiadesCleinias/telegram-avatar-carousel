@@ -10,7 +10,7 @@ redis_connector = redis.Redis(
     decode_responses=False,
 )
 telegram_client = TelegramClient(
-    'data_session/session', settings.TG_API_KEY, settings.TG_API_HASH,
+    session='data_session/session', api_id=settings.TG_API_KEY, api_hash=settings.TG_API_HASH,
 )
 
 async def get_telegram_client_inited() -> 'TelegramClient':

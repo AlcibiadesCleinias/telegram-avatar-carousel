@@ -46,7 +46,9 @@ async def _change_image_to_next(
     """
     is_previous, new_image = await _get_next_image(phone, image_paths)
     logger.info('Next image %s to change', new_image)
-    await asyncio.sleep(choice(range(random_delay_period)))
+    to_sleep = choice(range(random_delay_period)) if random_delay_period else 0
+    logger.info('Sleep before change: %s seconds...', to_sleep)
+    await asyncio.sleep(to_sleep)
     changed = await change_avatar(client, new_image, delete_previous=is_previous)
     logger.info('Changed to %s', changed)
     image_set = await redis.set(redis_key_to_current_image(phone), new_image)

@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     TG_SESSION: str = 'session'
     ROTATE_AVATAR_TASK_CORO: str = "*/30 * * * *"
     DATA_AVATARS: str = "./data_avatars"
-    TASK_RANDOM_DELAY_PERIOD: str = 30
+    TASK_RANDOM_DELAY_PERIOD: int = 30
 
     class Config:
         case_sensitive = True

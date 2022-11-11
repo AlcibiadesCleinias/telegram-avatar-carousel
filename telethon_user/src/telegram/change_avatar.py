@@ -5,6 +5,7 @@ from telethon.errors import FilePart0MissingError
 from telethon.tl.functions.photos import UploadProfilePhotoRequest, DeletePhotosRequest
 
 from config.misc import redis
+from utils.image_files import generate_random_filename
 from utils.redis_storage import TelegramFileCacheStorage
 
 logger = logging.getLogger(__name__)
@@ -39,7 +40,7 @@ async def change_avatar(
         if not changed_avatar:
             logger.info('Upload new file %s to telegram...', image_path)
             upload_file_request = UploadProfilePhotoRequest(
-                await bot.upload_file(image_path)
+                await bot.upload_file(image_path, file_name=generate_random_filename(image_path))
             )
             logger.info('Save tg file %s into Redis cache...', image_path)
             await telegram_file_cache.save(upload_file_request.file)
