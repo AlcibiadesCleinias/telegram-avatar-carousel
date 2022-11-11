@@ -10,7 +10,11 @@ from utils.redis_storage import TelegramFileCacheStorage
 logger = logging.getLogger(__name__)
 
 
-async def change_avatar(client_inited: 'TelegramClient', image_path: str, delete_previous: bool = False) -> int:
+async def change_avatar(
+        client_inited: 'TelegramClient',
+        image_path: str,
+        delete_previous: bool = False,
+) -> int:
     """Return telegram image id of changed avatar.
     Feature:
     - check in Redis for cache
@@ -21,7 +25,7 @@ async def change_avatar(client_inited: 'TelegramClient', image_path: str, delete
         telegram_file_cached = await telegram_file_cache.get()
         changed_avatar = None
 
-        logger.info('Start uploading new photo...')
+        logger.info('Start avatar change process...')
         if telegram_file_cached:
             logger.info('Found file %s in redis cache, use it...', image_path)
             tg_file = await telegram_file_cache.get()
@@ -41,7 +45,7 @@ async def change_avatar(client_inited: 'TelegramClient', image_path: str, delete
             await telegram_file_cache.save(upload_file_request.file)
             changed_avatar = await bot(upload_file_request)
 
-        # delete previous old photo in the end of rotation action.
+        # delete previous old photo at the end of rotate action.
         if delete_previous:
             logger.info('Delete previous photo after uploaded the new one...')
             photos = await bot.get_profile_photos("me", offset=1, limit=1)

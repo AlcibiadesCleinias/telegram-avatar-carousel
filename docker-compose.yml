@@ -30,3 +30,4 @@ services:
     volumes:
       - telethon_user_data_session:/opt/data_session
       - ./telethon_user/src/data_avatars/:/opt/data_avatars/
+    restart: "no"

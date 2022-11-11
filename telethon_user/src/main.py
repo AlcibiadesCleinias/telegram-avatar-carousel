@@ -30,6 +30,7 @@ def main(args):
             client=get_telegram_client_inited,
             phone=settings.TG_API_PHONE,
             image_paths=all_images,
+            random_delay_period=settings.TASK_RANDOM_DELAY_PERIOD,
         ).start()
 
 
