@@ -35,21 +35,24 @@ async def _get_next_image(phone: str, images: list[str]) -> (bool, str):
     return bool(current_image), images[(idx + 1) % images_len]
 
 
-async def _change_image_to_next(
+async def change_image_to_next(
         client: TelegramClient,
         phone: str,
         image_paths: list[str],
         random_delay_period: int,
+        try_cache: bool,
 ):
     """Implementation of image changing, i.e. avatar rotation.
     :param random_delay_period: choose seconds to sleep before actual rotation.
+    :param try_cache: choose rather want to use cached telegram file meta first
+    or go to upload file instantly.
     """
     is_previous, new_image = await _get_next_image(phone, image_paths)
     logger.info('Next image %s to change', new_image)
     to_sleep = choice(range(random_delay_period)) if random_delay_period else 0
     logger.info('Sleep before change: %s seconds...', to_sleep)
     await asyncio.sleep(to_sleep)
-    changed = await change_avatar(client, new_image, delete_previous=is_previous)
+    changed = await change_avatar(client, new_image, try_cache=try_cache, delete_previous=is_previous)
     logger.info('Changed to %s', changed)
     image_set = await redis.set(redis_key_to_current_image(phone), new_image)
     return image_set
@@ -63,9 +66,10 @@ class RotateAvatarTask(CronTaskBase):
             phone: str,
             image_paths: list[str],
             random_delay_period: int = 0,
+            try_cache: bool = True,
     ):
         super().__init__(
             crontab_schedule,
-            coro=_change_image_to_next,
-            args=(client, phone, image_paths, random_delay_period),
+            coro=change_image_to_next,
+            args=(client, phone, image_paths, random_delay_period, try_cache,),
         )

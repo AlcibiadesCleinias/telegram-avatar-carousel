@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     ROTATE_AVATAR_TASK_CORO: str = "*/30 * * * *"
     DATA_AVATARS: str = "./data_avatars"
     TASK_RANDOM_DELAY_PERIOD: int = 30
+    TASK_TRY_CACHE_FIRST: bool = True
 
     class Config:
         case_sensitive = True

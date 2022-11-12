@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 from telethon import TelegramClient
@@ -14,16 +15,17 @@ logger = logging.getLogger(__name__)
 async def change_avatar(
         client_inited: 'TelegramClient',
         image_path: str,
+        try_cache: bool = False,
         delete_previous: bool = False,
 ) -> int:
     """Return telegram image id of changed avatar.
     Feature:
-    - check in Redis for cache
+    - check in Redis for file cached meta (that telegram returns on file saved)
     - delete previous if requested
     """
     async with await client_inited() as bot:
         telegram_file_cache = TelegramFileCacheStorage(redisdb=redis, file_name=image_path)
-        telegram_file_cached = await telegram_file_cache.get()
+        telegram_file_cached = await telegram_file_cache.get() if try_cache else None
         changed_avatar = None
 
         logger.info('Start avatar change process...')
@@ -46,8 +48,10 @@ async def change_avatar(
             await telegram_file_cache.save(upload_file_request.file)
             changed_avatar = await bot(upload_file_request)
 
-        # delete previous old photo at the end of rotate action.
+        # Delete previous old photo at the end of rotate action.
         if delete_previous:
+            # Lets sleep to not hit tg limit.
+            await asyncio.sleep(1)
             logger.info('Delete previous photo after uploaded the new one...')
             photos = await bot.get_profile_photos("me", offset=1, limit=1)
             logger.info('Fetched previous photos, got %s', photos)
